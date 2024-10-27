@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -95,5 +96,33 @@ class TaskController extends Controller
     {
         $task->delete();
         return redirect()->route('task.index', $task->id)->withSuccess('Task deleted with success');
+    }
+
+    public function query() {
+        /* $task = Task::all(); */
+
+        /* $task = Task::select('id', 'title')->orderby('id', 'desc')->get(); */
+
+        /* $task = Task::select()->where('id', 20)->get(); */
+
+       /*  $task = Task::find(20); */
+
+       /* $task = Task::select()
+        ->where('user_id', 1)
+        ->where('completed', 0)
+        ->get(); */
+
+       /* $task = Task::select()
+        ->join('users', 'user_id', 'user_id')
+        ->get(); */
+
+        /* $task = Task::where('completed', 0)->count(); */
+
+        /* SELECT COUNT(*) AS count_task, user_id FROM laravel_todo.tasks GROUP BY user_id */
+
+        $task = Task::select(DB::raw('count(*) as count_tasks, user_id'))
+            ->groupby('user_id') 
+            ->get();
+        return $task;
     }
 }

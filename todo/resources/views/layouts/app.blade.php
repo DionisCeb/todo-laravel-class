@@ -17,28 +17,32 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarsExample03">
-                    <ul class="navbar-nav me-auto mb-2 mb-sm-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{{ route('task.index') }}">Tasks</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
-                                aria-expanded="false">Users</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ route('user.create') }}">New User</a></li>
-                                <li><a class="dropdown-item" href="{{ route('user.index', 1) }}">User List</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
-                                aria-expanded="false">Tasks</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ route('task.create') }}">New Task</a></li>
-                                <li><a class="dropdown-item" href="{{ route('task.completed', 1) }}">Completed</a></li>
-                                <li><a class="dropdown-item" href="{{ route('task.completed', 0) }}">Unfinished</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                    
+                        <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+                        @auth
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="{{ route('task.index') }}">Tasks</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                                    aria-expanded="false">Users</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{{ route('user.create') }}">New User</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('user.index', 1) }}">User List</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                                    aria-expanded="false">Tasks</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{{ route('task.create') }}">New Task</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('task.completed', 1) }}">Completed</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('task.completed', 0) }}">Unfinished</a></li>
+                                </ul>
+                            </li>
+                            @endauth
+                        </ul>
+                    
                     <ul class="navbar-nav  mb-2 mb-sm-0">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
@@ -49,7 +53,11 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/registration">Login</a>
+                            @guest
+                                <a class="nav-link" href="{{route('login')}}">Login</a>
+                            @else
+                                <a class="nav-link" href="{{route('logout')}}">Logout</a>
+                            @endguest
                         </li>
                     </ul>
                 </div>
@@ -57,6 +65,11 @@
         </nav>
     </header>
     <div class="container">
+        @auth
+            <p>Welcome <strong>{{Auth::user()->name}},</strong></p>
+        @else
+            <p>Please login to continue</p>
+        @endauth
         @if(session('success'))
             
             <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert">

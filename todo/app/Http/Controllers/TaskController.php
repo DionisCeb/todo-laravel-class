@@ -5,17 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
+
+    public function __construct() {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        
         $tasks = Task::all();
-
         return view('task.index', ['tasks'=>$tasks]);
+        
+        
     }
 
     /**

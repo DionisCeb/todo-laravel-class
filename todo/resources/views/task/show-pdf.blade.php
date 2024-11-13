@@ -12,6 +12,16 @@
     font-size: 30px;
     text-align: center;
   }
+
+  img{
+    border: solid;
+    padding: 10px;
+    border-radius: 5px;
+    width: 80px;
+    position: absolute;
+    top:10px;
+    right:10px
+  }
 </style>
 <body>
     <h5 class="card-title">{{ $task->title }}</h5>
@@ -23,6 +33,8 @@
         <li><strong>Author:</strong>  {{ $task->user->name }} </li>
         <li><strong>Category:</strong> {{ $task->category ? $task->category->category[app()->getLocale()] ?? $task->category->category['en'] : '' }}</li>
     </ul>
+
+    <img src="data:image/png;base64,{{ base64_encode($qrCode) }}" alt="QR Code">
 </body>
 </html>
       

@@ -20,9 +20,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $category = Category::select()->where('id', 2)->get();
 
-        return $category;
         return view('category.create');
     }
 

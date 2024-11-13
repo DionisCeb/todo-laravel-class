@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Dompdf\Dompdf;
 
 class TaskController extends Controller
 {
@@ -29,8 +31,13 @@ class TaskController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        return view('task.create');
+    {   
+       /*  $categories = new Category();
+        $categories = $categories->categories(); */
+
+        $categories = Category::categories();
+        
+        return view('task.create', ['categories' => $categories]);
     }
 
     /**
@@ -42,14 +49,16 @@ class TaskController extends Controller
             'title' => 'required|string',
             'description' => 'required',
             'completed' => 'nullable|boolean',
-            'due_date' => 'nullable|date'
+            'due_date' => 'nullable|date',
+            'category_id' => 'required'
         ]);
         $task = Task::create([
             'title' => $request->title,
             'description' => $request->description,
             'completed' => $request->input('completed', false),
             'due_date' => $request->due_date,
-            'user_id' => '1',
+            'category_id' => $request->category_id,
+            'user_id' => Auth::user()->id,
             ]);
 
         //return $task;
@@ -61,7 +70,9 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        return view('task.show', ['task' => $task]);
+        $categories = Category::categories();
+        return view('task.show', compact('task', 'categories'));
+
     }
 
     /**
@@ -69,8 +80,12 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        return view('task.edit', ['task' => $task]);
+
+        $categories = Category::categories();
         
+
+        return view('task.edit', compact('task', 'categories'));
+    
     }
 
     /**
@@ -82,7 +97,8 @@ class TaskController extends Controller
             'title' => 'required|string',
             'description' => 'required',
             'completed' => 'nullable|boolean',
-            'due_date' => 'nullable|date'
+            'due_date' => 'nullable|date',
+            'category_id' => 'required'
         ]);
 
         $task->update([
@@ -90,7 +106,8 @@ class TaskController extends Controller
             'description' => $request->description,
             'completed' => $request->input('completed', false),
             'due_date' => $request->due_date,
-            'user_id' => '1',
+            'category_id' => $request->category_id,
+            'user_id' => Auth::user()->id
         ]);
 
         return redirect()->route('task.show', $task->id)->withSuccess('Task edited with success');
@@ -110,31 +127,16 @@ class TaskController extends Controller
         return view('task.index', ['tasks' => $tasks]);
     }
 
-    public function query() {
-        /* $task = Task::all(); */
+   public function pdf(Task $task) {
+        $pdf = new Dompdf();
+        $pdf->setPaper('letter', 'portrait');
+        $pdf->loadHtml(view('task.show-pdf', ["task" => $task]));
+        $pdf->render();
+        return $pdf->stream('task_'.$task->id .'.pdf');
 
-        /* $task = Task::select('id', 'title')->orderby('id', 'desc')->get(); */
+        //return view('task.show-pdf', compact('task'));
+   }
 
-        /* $task = Task::select()->where('id', 20)->get(); */
 
-       /*  $task = Task::find(20); */
 
-       /* $task = Task::select()
-        ->where('user_id', 1)
-        ->where('completed', 0)
-        ->get(); */
-
-       /* $task = Task::select()
-        ->join('users', 'user_id', 'user_id')
-        ->get(); */
-
-        /* $task = Task::where('completed', 0)->count(); */
-
-        /* SELECT COUNT(*) AS count_task, user_id FROM laravel_todo.tasks GROUP BY user_id */
-
-        $task = Task::select(DB::raw('count(*) as count_tasks, user_id'))
-            ->groupby('user_id') 
-            ->get();
-        return $task;
-    }
 }

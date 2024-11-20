@@ -37,8 +37,9 @@ Route::get('/query', [TaskController::class, 'query']);
 Route::middleware('auth')->group(function() {
     // drag the routes that i want to block without authentificated users
     Route::get('/users', [UserController::class, 'index'])->name('user.index');
-    Route::get('/registration', [UserController::class, 'create'])->name('user.create');
+    Route::get('/registration', [UserController::class, 'create'])->name('user.create')->middleware('can:create-users');
     Route::post('/registration', [UserController::class, 'store'])->name('user.store');
+    
     Route::get('/edit/user/{user}', [UserController::class, 'edit'])->name('user.edit');
 
 });

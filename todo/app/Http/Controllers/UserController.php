@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
@@ -36,7 +38,13 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('user.create');
+        if (Auth::user()->hasRole('Admin')) {
+            return view('user.create');
+        } else {
+            return redirect(route('login'));
+        }
+        
+        
     }
 
     /**
